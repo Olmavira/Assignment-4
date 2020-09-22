@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment4\\GameWebApi\\GameWebApi.csproj": {}
+    "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment-4\\GameWebApi\\GameWebApi.csproj": {}
   },
   "projects": {
-    "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment4\\GameWebApi\\GameWebApi.csproj": {
+    "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment-4\\GameWebApi\\GameWebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment4\\GameWebApi\\GameWebApi.csproj",
+        "projectUniqueName": "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment-4\\GameWebApi\\GameWebApi.csproj",
         "projectName": "GameWebApi",
-        "projectPath": "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment4\\GameWebApi\\GameWebApi.csproj",
+        "projectPath": "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment-4\\GameWebApi\\GameWebApi.csproj",
         "packagesPath": "C:\\Users\\Ollim\\.nuget\\packages\\",
-        "outputPath": "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment4\\GameWebApi\\obj\\",
+        "outputPath": "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment-4\\GameWebApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Ollim\\AppData\\Roaming\\NuGet\\NuGet.Config"

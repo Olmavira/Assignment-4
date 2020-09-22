@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mndlcDIg89DIDH769Tuxe9IhIob/50i7j8LHvbog08ktLWzJ9arIkRuFM5cWsxf5YFJ6ppuvuRqtrhtaUx/noA==",
+  "dgSpecHash": "ZbY9ezw+eiVBx0dzgR6ALy85OZ8VRlRuSFpOh5xO0AJBi7NOYI3wfDjUBmKtSVniwYDCL2iNEWS+FsG1DIy+ag==",
   "success": true,
-  "projectFilePath": "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment4\\GameWebApi\\GameWebApi.csproj",
+  "projectFilePath": "E:\\Koulu\\Periodi v3p1\\Taustajarjestelmat\\Assignment4\\Assignment-4\\GameWebApi\\GameWebApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ollim\\.nuget\\packages\\dnsclient\\1.3.1\\dnsclient.1.3.1.nupkg.sha512",
     "C:\\Users\\Ollim\\.nuget\\packages\\microsoft.netcore.platforms\\2.1.2\\microsoft.netcore.platforms.2.1.2.nupkg.sha512",

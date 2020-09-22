@@ -94,7 +94,35 @@ public class MongoDpRepository : IRepository
 
     public Task<Item> CreateItem(Guid playerId, Item item)
     {
-        throw new NotImplementedException();
+        var newItem = new Item
+        {
+            Level = 0,
+            Type = 0,
+            CreationTime = DateTime.Now
+        };
+
+        string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
+        List<Player> players = JsonConvert.DeserializeObject<List<Player>>(jsonToBeDeserialized);
+        Player foundPlayer = new Player();
+        foreach (Player player in players)
+        {
+            if (player.Id == playerId)
+            {
+                foundPlayer = player;
+            }
+
+        }
+        foundPlayer.Name = "not Found";
+
+
+        if (foundPlayer.Id == playerId)
+        {
+            foundPlayer.Items.Add(item);
+            string output = JsonConvert.SerializeObject(foundPlayer);
+            File.AppendAllText(path, output);
+            return Task.FromResult<Item>(newItem);
+        }
+        return Task.FromResult<Item>(newItem);
     }
     public Task<Item> GetItem(Guid playerId, Guid itemId)
     {
