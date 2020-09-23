@@ -34,29 +34,16 @@ public class MongoDpRepository : IRepository
     {
         // string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
         // Player[] players = JsonConvert.DeserializeObject<Player[]>(jsonToBeDeserialized);
-
-        var sortDef = Builders<Player>.Sort.Descending(player => player.Score);
-        var players = await _playerCollection.Find(new BsonDocument()).Sort(sortDef).ToListAsync();
+        var filter = Builders<Player>.Filter.Empty;
+        List<Player> players = await _playerCollection.Find(filter).ToListAsync();
         return players.ToArray();
 
         //return Task.FromResult<Player[]>(players);
     }
-    public Task<Player> Create(Player player)
+    public async Task<Player> Create(Player player)
     {
-        var newlycreatedPlayer = new Player
-        {
-            Id = player.Id,
-            Name = player.Name,
-            Score = 0,
-            Level = 0,
-            IsBanned = false,
-            CreationTime = DateTime.Now
-        };
-
-        string output = JsonConvert.SerializeObject(newlycreatedPlayer);
-        File.AppendAllText(path, output);
-
-        return Task.FromResult<Player>(newlycreatedPlayer);
+        await _playerCollection.InsertManyAsync(player);
+        return player;
     }
     public Task<Player> Modify(Guid id, ModifiedPlayer player)
     {
@@ -82,44 +69,23 @@ public class MongoDpRepository : IRepository
         return await _playerCollection.FindOneAndDeleteAsync(filter);
     }
 
-    public Task<Item> CreateItem(Guid playerId, Item item)
+    public async Task<Item> CreateItem(Guid playerId, Item item)
     {
-        var newItem = new Item
-        {
-            Id = item.Id,
-            Level = 0,
-            Type = 0,
-            CreationTime = DateTime.Now
-        };
+        FilterDefinition<Player> filter = Builders<Player>.Filter.Eq(player => player.Id, playerId);
+        Player player = await _playerCollection.Find(filter).FirstAsync();
 
-        string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
-        List<Player> players = JsonConvert.DeserializeObject<List<Player>>(jsonToBeDeserialized);
-        Player foundPlayer = new Player();
-        foreach (Player player in players)
+        if (player == null)
         {
-            if (player.Id == playerId)
-            {
-                foundPlayer = player;
-            }
-
+            throw new NotFoundException("Player Not Found!");
         }
-
-        if (foundPlayer.Id == playerId)
+        if (player.Items == null)
         {
-            Item[] playerItems = new Item[foundPlayer.Items.Length + 1];
-            int count = 0;
-            foreach (Item i in foundPlayer.Items)
-            {
-                playerItems[count] = foundPlayer.Items[count];
-                count++;
-            }
-            foundPlayer.Items = playerItems;
-            foundPlayer.Items[playerItems.Length - 1] = item;
-            string output = JsonConvert.SerializeObject(foundPlayer);
-            File.AppendAllText(path, output);
-            return Task.FromResult<Item>(newItem);
+            player.Items = new List<Item>();
+
+            player.Items.Add(item);
+            return item;
         }
-        return Task.FromResult<Item>(newItem);
+        return item;
     }
     public Task<Item> GetItem(Guid playerId, Guid itemId)
     {
@@ -145,27 +111,17 @@ public class MongoDpRepository : IRepository
         return Task.FromResult<Item>(foundItem);
         //throw new NotImplementedException();
     }
-    public Task<Item[]> GetAllItems(Guid playerId)
+    public async Task<Item[]> GetAllItems(Guid playerId)
     {
-        string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
-        List<Player> players = JsonConvert.DeserializeObject<List<Player>>(jsonToBeDeserialized);
-        Player foundPlayer = new Player();
-        Item[] foundItems = new Item[0];
-        foreach (Player player in players)
-        {
-            if (player.Id == playerId)
-            {
-                foundItems = player.Items;
-                return Task.FromResult<Item[]>(foundItems);
-            }
-        }
-        foundPlayer.Name = "not Found";
-        return Task.FromResult<Item[]>(foundItems);
-        //throw new NotImplementedExce
+        var filter = Builders<Player>.Filter.Eq(player => player.Id, playerId);
+        Player player = await _playerCollection.Find(filter).FirstAsync();
+        return player.Items.ToArray();
     }
-    public Task<Item> UpdateItem(Guid playerId, Item item)
+    public async Task<Item> UpdateItem(Guid playerId, Item item)
     {
-        throw new NotImplementedException();
+        var filter = Builders<Player>.Filter.Eq(player => player.Id, playerId);
+        Player player2 = await _playerCollection.Find(filter).FirstAsync();
+        
     }
     public Task<Item> DeleteItem(Guid playerId, Item item)
     {
