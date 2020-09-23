@@ -7,7 +7,7 @@ using System.Net.Http;
 public class Player
 {
     public Guid Id { get; set; }
-    public List<Item> Items { get; set; }
+    public Item[] Items { get; set; }
     public string Name { get; set; }
     public int Score { get; set; }
     public int Level { get; set; }

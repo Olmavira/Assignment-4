@@ -7,10 +7,22 @@ using System.Collections;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Security.Permissions;
+using MongoDB.Driver;
+using MongoDB.Bson;
 public class MongoDpRepository : IRepository
 {
     string path = @"E:\Koulu\Periodi v3p1\Taustajarjestelmat\Assignment3\GameWebApi\game-dev.txt";
     List<Player> playerList = new List<Player>();
+
+    private readonly IMongoCollection<Player> _playerCollection;
+    private readonly IMongoCollection<BsonDocument> _bsonDocumentCollection;
+
+public MongoDpRepository() {
+    var mongoClient = new MongoClient("mongodb://localhost:27017");
+    var database = mongoClient.GetDatabase("game");
+    _playerCollection = database.GetCollection<Player>("players");
+    _bsonDocumentCollection = database.GetCollection<BsonDocument>("players");
+}
 
     public Task<Player> Get(Guid id)
     {
@@ -96,6 +108,7 @@ public class MongoDpRepository : IRepository
     {
         var newItem = new Item
         {
+            Id = item.Id,
             Level = 0,
             Type = 0,
             CreationTime = DateTime.Now
@@ -112,12 +125,18 @@ public class MongoDpRepository : IRepository
             }
 
         }
-        foundPlayer.Name = "not Found";
-
 
         if (foundPlayer.Id == playerId)
         {
-            foundPlayer.Items.Add(item);
+            Item[] playerItems = new Item[foundPlayer.Items.Length + 1];
+            int count = 0;
+            foreach (Item i in foundPlayer.Items)
+            {
+                playerItems[count] = foundPlayer.Items[count];
+                count++;
+            }
+            foundPlayer.Items = playerItems;
+            foundPlayer.Items[playerItems.Length - 1] = item;
             string output = JsonConvert.SerializeObject(foundPlayer);
             File.AppendAllText(path, output);
             return Task.FromResult<Item>(newItem);
@@ -126,11 +145,45 @@ public class MongoDpRepository : IRepository
     }
     public Task<Item> GetItem(Guid playerId, Guid itemId)
     {
-        throw new NotImplementedException();
+        string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
+        List<Player> players = JsonConvert.DeserializeObject<List<Player>>(jsonToBeDeserialized);
+        Player foundPlayer = new Player();
+        Item foundItem = new Item();
+        foreach (Player player in players)
+        {
+            if (player.Id == playerId)
+            {
+                foreach (Item i in player.Items)
+                {
+                    if (i.Id == itemId)
+                    {
+                        foundItem = i;
+                    }
+                }
+                return Task.FromResult<Item>(foundItem);
+            }
+        }
+        foundPlayer.Name = "not Found";
+        return Task.FromResult<Item>(foundItem);
+        //throw new NotImplementedException();
     }
     public Task<Item[]> GetAllItems(Guid playerId)
     {
-        throw new NotImplementedException();
+        string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
+        List<Player> players = JsonConvert.DeserializeObject<List<Player>>(jsonToBeDeserialized);
+        Player foundPlayer = new Player();
+        Item[] foundItems = new Item[0];
+        foreach (Player player in players)
+        {
+            if (player.Id == playerId)
+            {
+                foundItems = player.Items;
+                return Task.FromResult<Item[]>(foundItems);
+            }
+        }
+        foundPlayer.Name = "not Found";
+        return Task.FromResult<Item[]>(foundItems);
+        //throw new NotImplementedExce
     }
     public Task<Item> UpdateItem(Guid playerId, Item item)
     {

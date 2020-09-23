@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB;
 
 namespace GameWebApi
 {
@@ -38,6 +39,12 @@ namespace GameWebApi
             }
 
             //app.UseHttpsRedirection();
+
+            app.Use(async (context, next) => {
+                Console.WriteLine("Hello World!");
+                await next.Invoke();
+                Console.WriteLine("Done");
+            });
 
             app.UseRouting();
 

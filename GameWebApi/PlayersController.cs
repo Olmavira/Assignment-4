@@ -19,6 +19,7 @@ namespace GameWebApi.Controllers
             _logger = logger;
             _repository = repository;
         }
+        [NotImplExceptionFilter]
         [HttpGet]
         [Route("{id}")]
         public Task<Player> Get(Guid id)
