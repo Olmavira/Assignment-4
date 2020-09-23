@@ -17,36 +17,29 @@ public class MongoDpRepository : IRepository
     private readonly IMongoCollection<Player> _playerCollection;
     private readonly IMongoCollection<BsonDocument> _bsonDocumentCollection;
 
-public MongoDpRepository() {
-    var mongoClient = new MongoClient("mongodb://localhost:27017");
-    var database = mongoClient.GetDatabase("game");
-    _playerCollection = database.GetCollection<Player>("players");
-    _bsonDocumentCollection = database.GetCollection<BsonDocument>("players");
-}
+    public MongoDpRepository()
+    {
+        var mongoClient = new MongoClient("mongodb://localhost:27017");
+        var database = mongoClient.GetDatabase("game");
+        _playerCollection = database.GetCollection<Player>("players");
+        _bsonDocumentCollection = database.GetCollection<BsonDocument>("players");
+    }
 
     public Task<Player> Get(Guid id)
     {
-        string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
-        List<Player> players = JsonConvert.DeserializeObject<List<Player>>(jsonToBeDeserialized);
-        Player foundPlayer = new Player();
-        foreach (Player player in players)
-        {
-            if (player.Id == id)
-            {
-                foundPlayer = player;
-                return Task.FromResult<Player>(foundPlayer);
-            }
-
-        }
-        foundPlayer.Name = "not Found";
-        return Task.FromResult<Player>(foundPlayer);
+        var filter = Builders<Player>.Filter.Eq(player => player.Id, id);
+        return _playerCollection.Find(filter).FirstAsync();
     }
-    public Task<Player[]> GetAll()
+    public async Task<Player[]> GetAll()
     {
-        string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
-        Player[] players = JsonConvert.DeserializeObject<Player[]>(jsonToBeDeserialized);
+        // string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
+        // Player[] players = JsonConvert.DeserializeObject<Player[]>(jsonToBeDeserialized);
 
-        return Task.FromResult<Player[]>(players);
+        var sortDef = Builders<Player>.Sort.Descending(player => player.Score);
+        var players = await _playerCollection.Find(new BsonDocument()).Sort(sortDef).ToListAsync();
+        return players.ToArray();
+
+        //return Task.FromResult<Player[]>(players);
     }
     public Task<Player> Create(Player player)
     {
@@ -83,25 +76,10 @@ public MongoDpRepository() {
         foundPlayer.Name = "not Found";
         return Task.FromResult<Player>(foundPlayer);
     }
-    public Task<Player> Delete(Guid id)
+    public async Task<Player> Delete(Guid id)
     {
-        string jsonToBeDeserialized = System.IO.File.ReadAllText(path);
-        List<Player> players = JsonConvert.DeserializeObject<List<Player>>(jsonToBeDeserialized);
-        Player foundPlayer = new Player();
-        foreach (Player playeri in players)
-        {
-            if (playeri.Id == id)
-            {
-                foundPlayer = playeri;
-                players.Remove(playeri);
-                string output = JsonConvert.SerializeObject(players);
-                File.WriteAllText(path, output);
-                return Task.FromResult<Player>(foundPlayer);
-            }
-
-        }
-        foundPlayer.Name = "not Found";
-        return Task.FromResult<Player>(foundPlayer);
+        FilterDefinition<Player> filter = Builders<Player>.Filter.Eq(player => player.Id, id);
+        return await _playerCollection.FindOneAndDeleteAsync(filter);
     }
 
     public Task<Item> CreateItem(Guid playerId, Item item)
