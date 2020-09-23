@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.ComponentModel.DataAnnotations;
-public class Item {
+public class Item
+{
+
+    public string Name { get; set; }
     public Guid Id { get; set; }
     [Range(0, 99)]
     public int Level { get; set; }
@@ -12,6 +15,7 @@ public class Item {
     public DateTime CreationTime { get; set; }
 }
 
-    public enum ItemType {
-SWORD, POTION, SHIELD
+public enum ItemType
+{
+    SWORD, POTION, SHIELD
 };

@@ -1,7 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Net.Http;
-public class NewItem {
-public ItemType type {get; set;}
+
+namespace GameWebApi
+{
+    public class NewItem
+    {
+        public string Name { get; set; }
+        public int Level { get; set; }
+        public ItemType Type { get; set; }
+    }
 }

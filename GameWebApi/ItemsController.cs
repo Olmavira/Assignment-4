@@ -3,19 +3,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace GameWebApi.Controllers
+namespace GameWebApi
 {
     [ApiController]
-    [Route("api/players/{playerid}/items")]
+    [Route("players/{playerId}/items")]
     public class ItemsController : ControllerBase
     {
         private readonly ILogger<ItemsController> _logger;
         private readonly IRepository _repository;
-
-        public void ConfigureServices()
-        {
-
-        }
 
         public ItemsController(ILogger<ItemsController> logger, IRepository repository)
         {
@@ -24,54 +19,45 @@ namespace GameWebApi.Controllers
         }
 
         [HttpGet]
-        [Route("getall")]
-        public Task<Item[]> GetAll(int minlevel)
+        [Route("{itemId:Guid}")]
+        public async Task<Item> GetItem(Guid playerId, Guid itemId)
         {
-            return Task.FromResult(new Item[] { new Item() { Level = minlevel },
-                                    new Item() { Level = (minlevel + 1) } });
+            return await _repository.GetItem(playerId, itemId);
         }
 
         [HttpGet]
-        [Route("{PlayerId}")]
-        public Task<Item> GetItem(Guid id, Guid ItemId)
+        // [Route("{playerId:Guid}")]
+
+        public async Task<Item[]> GetAllItems(Guid playerId)
         {
-            return _repository.GetItem(id, ItemId);
+            return await _repository.GetAllItems(playerId);
         }
 
         [HttpPost]
-        [Route("create")]
-        public async Task<Item> CreateItem([FromBody] NewItem Item)
+        //[Route("{playerId:Guid}")]
+        public async Task<Item> CreateItem(Guid playerId, [FromBody] NewItem newItem)
         {
-            DateTime localDate = DateTime.UtcNow;
+            Item _item = new Item();
+            _item.Id = Guid.NewGuid();
+            _item.CreationTime = DateTime.UtcNow;
+            _item.Level = newItem.Level;
+            _item.Type = newItem.Type;
 
-            Item new_Item = new Item();
-            new_Item.Type = 0;
-            new_Item.Level = 0;
-            if (new_Item.Level < 1 || new_Item.Level > 99)
-            {
-                return null;
-            }
-
-            new_Item.CreationTime = localDate;
-
-            //await _repository.CreateItem();
-            return new_Item;
+            return await _repository.CreateItem(playerId, _item);
         }
 
-        [HttpPost]
-        [Route("{PlayerId}/modify/{id:Guid}")]
-        public async Task<Item> Modify(Guid id, [FromBody] ModifiedItem Item)
+         [HttpPost]
+        [Route("modify/{itemId:Guid}")]
+        public async Task<Item> UpdateItem(Guid playerId, Guid itemId, [FromBody] ModifiedItem item)
         {
-            // await _repository.Modify(id, Item);
-            return null;
+            return await _repository.UpdateItem(playerId, itemId, item);
         }
 
         [HttpDelete]
-        [Route("{id:Guid}")]
-        public async Task<Item> Delete(Guid id)
+        [Route("{itemId:Guid}")]
+        public async Task<Item> DeleteItem(Guid playerId, Guid itemId)
         {
-            await _repository.Delete(id);
-            return null;
+            return await _repository.DeleteItem(playerId, itemId);
         }
     }
 }

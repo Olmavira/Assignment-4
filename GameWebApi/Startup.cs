@@ -40,11 +40,7 @@ namespace GameWebApi
 
             //app.UseHttpsRedirection();
 
-            app.Use(async (context, next) => {
-                Console.WriteLine("Hello World!");
-                await next.Invoke();
-                Console.WriteLine("Done");
-            });
+            app.UseMyMiddleware();
 
             app.UseRouting();
 

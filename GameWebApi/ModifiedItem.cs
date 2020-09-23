@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
-public class ModifiedItem {
-
+namespace GameWebApi
+{
+    public class ModifiedItem
+    {
+        public int Level { get; set; }
+    }
 }

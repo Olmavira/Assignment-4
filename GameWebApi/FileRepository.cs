@@ -154,11 +154,11 @@ namespace GameWebApi
         {
             throw new NotImplementedException();
         }
-        public Task<Item> UpdateItem(Guid playerId, Item item)
+        public Task<Item> UpdateItem(Guid playerId, Guid itemId, ModifiedItem item)
         {
             throw new NotImplementedException();
         }
-        public Task<Item> DeleteItem(Guid playerId, Item item)
+        public Task<Item> DeleteItem(Guid playerId, Guid itemId)
         {
             throw new NotImplementedException();
         }
